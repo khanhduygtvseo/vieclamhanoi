@@ -96,6 +96,25 @@
     el.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover) and (min-width: 901px)').matches) openInd(el); });
   });
 
+  // Trang bài viết: thanh tiến độ đọc và mục lục theo vị trí cuộn
+  const art = $('.darticle');
+  if (art) {
+    const bar = $('.dprog span');
+    const links = $$('.toc a');
+    const heads = links.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+    const toc = $('.toc');
+    if (toc && innerWidth < 901) toc.open = false;
+    const track = () => {
+      const b = art.getBoundingClientRect();
+      if (bar) bar.style.transform = `scaleX(${Math.min(1, Math.max(0, (innerHeight * .3 - b.top) / b.height))})`;
+      let cur = '';
+      heads.forEach(h => { if (h.getBoundingClientRect().top < innerHeight * .28) cur = h.id; });
+      links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + cur));
+    };
+    addEventListener('scroll', track, { passive: true });
+    track();
+  }
+
   // Bộ lọc chủ đề ở trang Blog
   const tpick = $('.tpick');
   if (tpick) {
